@@ -1,0 +1,214 @@
+{
+  "benchmarks": {
+    "level1": {
+      "name": "Follow the Leader",
+      "description": "Single object tracking for smooth pursuit",
+      "ageGroups": {
+        "5-7": {
+          "trackingAccuracy": {
+            "excellent": 70,
+            "good": 55,
+            "fair": 40,
+            "needsImprovement": 25
+          },
+          "timeOnTarget": {
+            "excellent": 60,
+            "good": 45,
+            "fair": 30,
+            "needsImprovement": 15
+          },
+          "focusScore": {
+            "excellent": 75,
+            "good": 60,
+            "fair": 45,
+            "needsImprovement": 30
+          }
+        },
+        "8-10": {
+          "trackingAccuracy": {
+            "excellent": 80,
+            "good": 65,
+            "fair": 50,
+            "needsImprovement": 35
+          },
+          "timeOnTarget": {
+            "excellent": 70,
+            "good": 55,
+            "fair": 40,
+            "needsImprovement": 25
+          },
+          "focusScore": {
+            "excellent": 85,
+            "good": 70,
+            "fair": 55,
+            "needsImprovement": 40
+          }
+        },
+        "11-13": {
+          "trackingAccuracy": {
+            "excellent": 85,
+            "good": 75,
+            "fair": 60,
+            "needsImprovement": 45
+          },
+          "timeOnTarget": {
+            "excellent": 80,
+            "good": 65,
+            "fair": 50,
+            "needsImprovement": 35
+          },
+          "focusScore": {
+            "excellent": 90,
+            "good": 80,
+            "fair": 65,
+            "needsImprovement": 50
+          }
+        }
+      }
+    },
+    "level2": {
+      "name": "Collision Course",
+      "description": "Multiple object tracking with attention shifting",
+      "ageGroups": {
+        "5-7": {
+          "trackingAccuracy": {
+            "excellent": 60,
+            "good": 45,
+            "fair": 30,
+            "needsImprovement": 20
+          },
+          "targetAcquisitionSpeed": {
+            "excellent": 500,
+            "good": 750,
+            "fair": 1000,
+            "needsImprovement": 1500
+          },
+          "focusScore": {
+            "excellent": 70,
+            "good": 55,
+            "fair": 40,
+            "needsImprovement": 25
+          }
+        },
+        "8-10": {
+          "trackingAccuracy": {
+            "excellent": 70,
+            "good": 55,
+            "fair": 40,
+            "needsImprovement": 30
+          },
+          "targetAcquisitionSpeed": {
+            "excellent": 400,
+            "good": 600,
+            "fair": 850,
+            "needsImprovement": 1200
+          },
+          "focusScore": {
+            "excellent": 80,
+            "good": 65,
+            "fair": 50,
+            "needsImprovement": 35
+          }
+        },
+        "11-13": {
+          "trackingAccuracy": {
+            "excellent": 75,
+            "good": 65,
+            "fair": 50,
+            "needsImprovement": 40
+          },
+          "targetAcquisitionSpeed": {
+            "excellent": 350,
+            "good": 500,
+            "fair": 700,
+            "needsImprovement": 1000
+          },
+          "focusScore": {
+            "excellent": 85,
+            "good": 75,
+            "fair": 60,
+            "needsImprovement": 45
+          }
+        }
+      }
+    },
+    "level3": {
+      "name": "Find the Pattern",
+      "description": "Pattern recognition with distractor inhibition",
+      "ageGroups": {
+        "5-7": {
+          "trackingAccuracy": {
+            "excellent": 50,
+            "good": 35,
+            "fair": 25,
+            "needsImprovement": 15
+          },
+          "patternRecognition": {
+            "excellent": 60,
+            "good": 45,
+            "fair": 30,
+            "needsImprovement": 20
+          },
+          "focusScore": {
+            "excellent": 65,
+            "good": 50,
+            "fair": 35,
+            "needsImprovement": 20
+          }
+        },
+        "8-10": {
+          "trackingAccuracy": {
+            "excellent": 65,
+            "good": 50,
+            "fair": 35,
+            "needsImprovement": 25
+          },
+          "patternRecognition": {
+            "excellent": 70,
+            "good": 55,
+            "fair": 40,
+            "needsImprovement": 30
+          },
+          "focusScore": {
+            "excellent": 75,
+            "good": 60,
+            "fair": 45,
+            "needsImprovement": 30
+          }
+        },
+        "11-13": {
+          "trackingAccuracy": {
+            "excellent": 70,
+            "good": 60,
+            "fair": 45,
+            "needsImprovement": 35
+          },
+          "patternRecognition": {
+            "excellent": 80,
+            "good": 65,
+            "fair": 50,
+            "needsImprovement": 40
+          },
+          "focusScore": {
+            "excellent": 85,
+            "good": 70,
+            "fair": 55,
+            "needsImprovement": 40
+          }
+        }
+      }
+    }
+  },
+  "interpretationGuidelines": {
+    "trackingAccuracy": "Percentage of time the child's gaze was within the tracking zone of the target object. Higher is better.",
+    "timeOnTarget": "Total seconds spent looking at the target object. Indicates sustained attention.",
+    "focusScore": "Overall score combining accuracy and consistency. Range 0-100.",
+    "targetAcquisitionSpeed": "Milliseconds to shift gaze to a new target. Lower is better.",
+    "patternRecognition": "Ability to identify and follow predictable patterns. Higher is better.",
+    "progressIndicators": {
+      "improving": "Score increased by 5% or more from previous session",
+      "stable": "Score within 5% of previous session",
+      "declining": "Score decreased by 5% or more from previous session"
+    }
+  }
+}

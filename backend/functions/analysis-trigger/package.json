@@ -1,0 +1,10 @@
+{
+  "name": "analysis-trigger",
+  "version": "1.0.0",
+  "description": "Lambda function to trigger Bedrock Agent analysis",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.0.0",
+    "@aws-sdk/client-dynamodb": "^3.0.0"
+  }
+}
