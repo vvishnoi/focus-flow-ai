@@ -1,0 +1,79 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js
+frontend/.next/
+frontend/.next/cache/
+frontend/out/
+.next/
+.next/cache/
+
+# Production
+build/
+dist/
+
+# Misc
+.DS_Store
+*.pem
+
+# SSL Certificates (locally generated)
+frontend/certificates/
+certificates/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# AWS
+.aws-sam/
+samconfig.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# CDK
+infra/cdk.out/
+infra/node_modules/
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/.terraform.lock.hcl
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/*.tfvars
+infra/terraform/.terraform.tfstate.lock.info
+
+# Lambda deployment packages
+backend/functions/**/*.zip
+backend/functions/**/node_modules/
+
+# Frontend build
+frontend/out/
+frontend/.env.production
+frontend/.env.local
+
+# Deployment scripts
+scripts/invalidate-cloudfront.sh
