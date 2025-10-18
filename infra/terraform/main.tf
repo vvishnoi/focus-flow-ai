@@ -60,6 +60,8 @@ module "lambda" {
   reports_table_arn       = module.dynamodb.reports_table_arn
   users_table_name        = module.dynamodb.users_table_name
   users_table_arn         = module.dynamodb.users_table_arn
+  profiles_table_name     = module.dynamodb.profiles_table_name
+  profiles_table_arn      = module.dynamodb.profiles_table_arn
   bedrock_agent_id        = module.bedrock.agent_id
   bedrock_agent_alias_id  = module.bedrock.agent_alias_id
 }
@@ -68,13 +70,19 @@ module "lambda" {
 module "api_gateway" {
   source = "./modules/api-gateway"
 
-  project_name              = var.project_name
-  environment               = var.environment
-  data_ingestor_invoke_arn  = module.lambda.data_ingestor_invoke_arn
-  data_ingestor_function_name = module.lambda.data_ingestor_function_name
-  get_reports_invoke_arn    = module.lambda.get_reports_invoke_arn
-  get_reports_function_name = module.lambda.get_reports_function_name
-  frontend_url              = var.frontend_url
+  project_name                 = var.project_name
+  environment                  = var.environment
+  data_ingestor_invoke_arn     = module.lambda.data_ingestor_invoke_arn
+  data_ingestor_function_name  = module.lambda.data_ingestor_function_name
+  get_reports_invoke_arn       = module.lambda.get_reports_invoke_arn
+  get_reports_function_name    = module.lambda.get_reports_function_name
+  create_profile_invoke_arn    = module.lambda.create_profile_invoke_arn
+  create_profile_function_name = module.lambda.create_profile_function_name
+  get_profiles_invoke_arn      = module.lambda.get_profiles_invoke_arn
+  get_profiles_function_name   = module.lambda.get_profiles_function_name
+  delete_profile_invoke_arn    = module.lambda.delete_profile_invoke_arn
+  delete_profile_function_name = module.lambda.delete_profile_function_name
+  frontend_url                 = var.frontend_url
 }
 
 # Bedrock Agent

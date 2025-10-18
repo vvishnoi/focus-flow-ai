@@ -5,9 +5,17 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 export interface SessionData {
   userId: string
   sessionId: string
+  profileId: string
+  profileName: string
+  profileAge: number
+  profileGender: string
+  profileWeight?: number
+  profileHeight?: number
   level: string
   startTime: number
   endTime: number
+  sessionDuration: number
+  datePlayed: string
   gazeData: Array<{
     timestamp: number
     gazeX: number
@@ -21,6 +29,18 @@ export interface SessionData {
     timestamp: number
     data: any
   }>
+  metrics: {
+    totalGazePoints: number
+    accurateGazes: number
+    accuracyPercentage: number
+    // Level-specific metrics
+    objectsFollowed?: number
+    averageFollowTime?: number
+    collisionsAvoided?: number
+    totalCollisions?: number
+    patternsIdentified?: number
+    distractorsIgnored?: number
+  }
 }
 
 export interface Report {

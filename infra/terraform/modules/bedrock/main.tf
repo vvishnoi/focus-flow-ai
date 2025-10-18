@@ -25,6 +25,15 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "knowledge_base" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "knowledge_base" {
+  bucket = aws_s3_bucket.knowledge_base.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 # Upload knowledge base files
 resource "aws_s3_object" "benchmarks" {
   bucket       = aws_s3_bucket.knowledge_base.id
@@ -32,6 +41,33 @@ resource "aws_s3_object" "benchmarks" {
   source       = "${path.root}/../../backend/bedrock/knowledge-base/benchmarks.json"
   etag         = filemd5("${path.root}/../../backend/bedrock/knowledge-base/benchmarks.json")
   content_type = "application/json"
+}
+
+resource "aws_s3_object" "research_metadata" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "metadata/research-metadata.json"
+  source       = "${path.root}/../../backend/bedrock/knowledge-base/research-metadata.json"
+  etag         = filemd5("${path.root}/../../backend/bedrock/knowledge-base/research-metadata.json")
+  content_type = "application/json"
+}
+
+# Create folder structure for research documents
+resource "aws_s3_object" "papers_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "papers/"
+  content_type = "application/x-directory"
+}
+
+resource "aws_s3_object" "extracted_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "extracted/"
+  content_type = "application/x-directory"
+}
+
+resource "aws_s3_object" "metadata_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "metadata/"
+  content_type = "application/x-directory"
 }
 
 # IAM role for Bedrock Agent

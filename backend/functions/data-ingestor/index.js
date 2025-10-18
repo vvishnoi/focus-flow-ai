@@ -13,17 +13,34 @@ exports.handler = async (event) => {
   try {
     // Parse request body
     const body = JSON.parse(event.body);
-    const { userId, sessionId, level, startTime, endTime, gazeData, events } = body;
+    const { 
+      userId, 
+      sessionId, 
+      profileId,
+      profileName,
+      profileAge,
+      profileGender,
+      profileWeight,
+      profileHeight,
+      level, 
+      startTime, 
+      endTime,
+      sessionDuration,
+      datePlayed,
+      gazeData, 
+      events,
+      metrics
+    } = body;
 
     // Validate required fields
-    if (!userId || !sessionId || !level) {
+    if (!userId || !sessionId || !level || !profileId) {
       return {
         statusCode: 400,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ error: 'Missing required fields: userId, sessionId, level' })
+        body: JSON.stringify({ error: 'Missing required fields: userId, sessionId, profileId, level' })
       };
     }
 
@@ -35,11 +52,20 @@ exports.handler = async (event) => {
     const sessionData = {
       userId,
       sessionId,
+      profileId,
+      profileName,
+      profileAge,
+      profileGender,
+      profileWeight,
+      profileHeight,
       level,
       startTime,
       endTime,
+      sessionDuration,
+      datePlayed,
       gazeData,
       events,
+      metrics,
       uploadedAt: timestamp
     };
 
@@ -53,14 +79,31 @@ exports.handler = async (event) => {
     console.log(`Session data stored in S3: ${s3Key}`);
 
     // Update user record in DynamoDB
+    const userItem = {
+      userId: { S: userId },
+      profileId: { S: profileId },
+      profileName: { S: profileName },
+      profileAge: { N: profileAge.toString() },
+      profileGender: { S: profileGender },
+      lastSessionId: { S: sessionId },
+      lastSessionTime: { N: timestamp.toString() },
+      lastLevel: { S: level },
+      lastSessionDuration: { N: sessionDuration ? sessionDuration.toString() : '0' },
+      lastAccuracy: { N: (metrics?.accuracyPercentage || 0).toString() },
+      updatedAt: { N: timestamp.toString() }
+    };
+    
+    // Add optional fields
+    if (profileWeight) {
+      userItem.profileWeight = { N: profileWeight.toString() };
+    }
+    if (profileHeight) {
+      userItem.profileHeight = { N: profileHeight.toString() };
+    }
+    
     await dynamoClient.send(new PutItemCommand({
       TableName: USERS_TABLE,
-      Item: {
-        userId: { S: userId },
-        lastSessionId: { S: sessionId },
-        lastSessionTime: { N: timestamp.toString() },
-        updatedAt: { N: timestamp.toString() }
-      }
+      Item: userItem
     }));
 
     return {

@@ -22,3 +22,33 @@ output "knowledge_base_bucket" {
   description = "Knowledge Base S3 bucket name"
   value       = aws_s3_bucket.knowledge_base.id
 }
+
+output "knowledge_base_role_arn" {
+  description = "Knowledge Base IAM role ARN"
+  value       = aws_iam_role.knowledge_base.arn
+}
+
+output "knowledge_base_role_name" {
+  description = "Knowledge Base IAM role name"
+  value       = aws_iam_role.knowledge_base.name
+}
+
+output "knowledge_base_id" {
+  description = "Bedrock Knowledge Base ID"
+  value       = try(aws_bedrockagent_knowledge_base.research.id, "")
+}
+
+output "knowledge_base_arn" {
+  description = "Bedrock Knowledge Base ARN"
+  value       = try(aws_bedrockagent_knowledge_base.research.knowledge_base_arn, "")
+}
+
+output "data_source_id" {
+  description = "Knowledge Base Data Source ID"
+  value       = try(aws_bedrockagent_data_source.research_papers.data_source_id, "")
+}
+
+output "opensearch_collection_endpoint" {
+  description = "OpenSearch Serverless collection endpoint"
+  value       = try(aws_opensearchserverless_collection.knowledge_base.collection_endpoint, "")
+}

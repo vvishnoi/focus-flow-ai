@@ -1,5 +1,6 @@
-import GameCanvas from '@/components/GameCanvas'
+import GamePageClient from './GamePageClient'
 
+// Required for static export
 export function generateStaticParams() {
   return [
     { level: 'level1' },
@@ -9,5 +10,5 @@ export function generateStaticParams() {
 }
 
 export default function GamePage({ params }: { params: { level: string } }) {
-  return <GameCanvas level={params.level} />
+  return <GamePageClient level={params.level} />
 }

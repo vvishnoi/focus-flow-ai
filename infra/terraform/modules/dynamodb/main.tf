@@ -61,3 +61,44 @@ resource "aws_dynamodb_table" "users" {
     Name = "${var.project_name}-users-${var.environment}"
   }
 }
+
+resource "aws_dynamodb_table" "profiles" {
+  name         = "${var.project_name}-profiles-${var.environment}"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "therapistId"
+  range_key    = "profileId"
+
+  attribute {
+    name = "therapistId"
+    type = "S"
+  }
+
+  attribute {
+    name = "profileId"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name            = "CreatedAtIndex"
+    hash_key        = "therapistId"
+    range_key       = "createdAt"
+    projection_type = "ALL"
+  }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+
+  tags = {
+    Name = "${var.project_name}-profiles-${var.environment}"
+  }
+}

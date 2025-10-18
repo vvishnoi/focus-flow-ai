@@ -4,14 +4,28 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import styles from './dashboard.module.css'
 import { getReports, getUserId, type Report } from '@/lib/api'
+import { getProfiles, getActiveProfileSync, clearActiveProfile, type Profile } from '@/lib/profiles'
+import ProfileModal from '@/components/ProfileModal'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default function Dashboard() {
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [activeProfile, setActiveProfile] = useState<Profile | null>(null)
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   useEffect(() => {
-    async function fetchReports() {
+    async function loadData() {
+      // Load profiles
+      const profilesList = await getProfiles()
+      setProfiles(profilesList)
+      
+      const active = getActiveProfileSync()
+      setActiveProfile(active)
+
       try {
         const userId = getUserId()
         console.log('Fetching reports for user:', userId)
@@ -26,14 +40,53 @@ export default function Dashboard() {
       }
     }
 
-    fetchReports()
+    loadData()
   }, [])
+
+  const handleProfileSelected = (profile: Profile) => {
+    setActiveProfile(profile)
+  }
+
+  const handleClearProfile = () => {
+    setShowClearConfirm(true)
+  }
+
+  const handleConfirmClear = () => {
+    clearActiveProfile()
+    setActiveProfile(null)
+    setShowClearConfirm(false)
+  }
 
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <h1 className={styles.title}>Progress Dashboard</h1>
         <p className={styles.subtitle}>AI-powered insights and reports</p>
+
+        {activeProfile && (
+          <div className={styles.profileBanner}>
+            <div>
+              <span className={styles.profileLabel}>Viewing reports for:</span>
+              <span className={styles.profileName}>{activeProfile.name}</span>
+              <span className={styles.profileAge}>Age {activeProfile.age}</span>
+            </div>
+            <div className={styles.profileActions}>
+              <button 
+                className={styles.changeProfileButton}
+                onClick={() => setShowProfileModal(true)}
+              >
+                Change Profile
+              </button>
+              <button 
+                className={styles.clearProfileButton}
+                onClick={handleClearProfile}
+                title="Clear profile and logout"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </div>
+        )}
         
         {loading && (
           <div className={styles.placeholder}>
@@ -89,6 +142,35 @@ export default function Dashboard() {
           Back to Home
         </Link>
       </div>
+
+      {!activeProfile && (
+        <div className={styles.noProfileBanner}>
+          <p>No profile selected. Select a profile to view their reports.</p>
+          <button 
+            className={styles.selectProfileButton}
+            onClick={() => setShowProfileModal(true)}
+          >
+            Select Profile
+          </button>
+        </div>
+      )}
+
+      <ProfileModal 
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        onProfileSelected={handleProfileSelected}
+      />
+
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        title="Clear Profile?"
+        message="This will log out the current patient. You can continue without a profile or select a new one."
+        confirmText="Clear Profile"
+        cancelText="Cancel"
+        onConfirm={handleConfirmClear}
+        onCancel={() => setShowClearConfirm(false)}
+        danger={true}
+      />
     </main>
   )
 }

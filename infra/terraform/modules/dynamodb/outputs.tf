@@ -17,3 +17,13 @@ output "users_table_arn" {
   description = "Users table ARN"
   value       = aws_dynamodb_table.users.arn
 }
+
+output "profiles_table_name" {
+  description = "Profiles table name"
+  value       = aws_dynamodb_table.profiles.name
+}
+
+output "profiles_table_arn" {
+  description = "Profiles table ARN"
+  value       = aws_dynamodb_table.profiles.arn
+}

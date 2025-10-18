@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import styles from './GameCanvas.module.css'
 import { GameEngine } from '@/lib/gameEngine'
 import { EyeTracker } from '@/lib/eyeTracker'
+import { getActiveProfileSync } from '@/lib/profiles'
 import SessionSummary from './SessionSummary'
 
 interface GameCanvasProps {
@@ -118,6 +119,37 @@ export default function GameCanvas({ level }: GameCanvasProps) {
     timerIntervalRef.current = updateInterval
   }
 
+  const calculateLevelMetrics = (data: any) => {
+    const metrics: any = {}
+    
+    switch (data.level) {
+      case 'level1':
+        // Follow the Leader metrics
+        const followEvents = data.events.filter((e: any) => e.type === 'object_followed')
+        metrics.objectsFollowed = followEvents.length
+        metrics.averageFollowTime = followEvents.length > 0 
+          ? followEvents.reduce((sum: number, e: any) => sum + (e.data?.duration || 0), 0) / followEvents.length 
+          : 0
+        break
+        
+      case 'level2':
+        // Collision Course metrics
+        const collisionEvents = data.events.filter((e: any) => e.type === 'collision_avoided')
+        metrics.collisionsAvoided = collisionEvents.length
+        metrics.totalCollisions = data.events.filter((e: any) => e.type === 'collision').length
+        break
+        
+      case 'level3':
+        // Pattern Recognition metrics
+        const patternEvents = data.events.filter((e: any) => e.type === 'pattern_identified')
+        metrics.patternsIdentified = patternEvents.length
+        metrics.distractorsIgnored = data.events.filter((e: any) => e.type === 'distractor_ignored').length
+        break
+    }
+    
+    return metrics
+  }
+
   const endSession = async () => {
     // Prevent multiple calls
     if (!sessionStarted) return
@@ -140,19 +172,50 @@ export default function GameCanvas({ level }: GameCanvasProps) {
     if (data) {
       try {
         const { getUserId, generateSessionId, submitSession } = await import('@/lib/api')
+        const activeProfile = getActiveProfileSync()
+        
+        if (!activeProfile) {
+          console.error('No active profile found')
+          router.push('/profiles')
+          return
+        }
+
         const userId = getUserId()
         const sessionId = generateSessionId()
 
         console.log('Submitting session to backend...')
         
+        // Calculate session metrics
+        const sessionDuration = data.endTime - data.startTime
+        const totalGazePoints = data.gazeData.length
+        const accurateGazes = data.gazeData.filter((gaze: any) => gaze.objectId !== null).length
+        const accuracyPercentage = totalGazePoints > 0 ? (accurateGazes / totalGazePoints) * 100 : 0
+        
+        // Calculate level-specific metrics
+        const levelMetrics = calculateLevelMetrics(data)
+        
         const response = await submitSession({
           userId,
           sessionId,
+          profileId: activeProfile.profileId,
+          profileName: activeProfile.name,
+          profileAge: activeProfile.age,
+          profileGender: activeProfile.gender,
+          profileWeight: activeProfile.weight,
+          profileHeight: activeProfile.height,
           level: data.level,
           startTime: data.startTime,
           endTime: data.endTime,
+          sessionDuration,
+          datePlayed: new Date().toISOString(),
           gazeData: data.gazeData,
-          events: data.events
+          events: data.events,
+          metrics: {
+            totalGazePoints,
+            accurateGazes,
+            accuracyPercentage: Math.round(accuracyPercentage * 100) / 100,
+            ...levelMetrics
+          }
         })
 
         console.log('Session submitted successfully:', response)
