@@ -40,7 +40,7 @@ output "knowledge_base_id" {
 
 output "knowledge_base_arn" {
   description = "Bedrock Knowledge Base ARN"
-  value       = try(aws_bedrockagent_knowledge_base.research.knowledge_base_arn, "")
+  value       = try(aws_bedrockagent_knowledge_base.research.arn, "")
 }
 
 output "data_source_id" {
@@ -51,4 +51,19 @@ output "data_source_id" {
 output "opensearch_collection_endpoint" {
   description = "OpenSearch Serverless collection endpoint"
   value       = try(aws_opensearchserverless_collection.knowledge_base.collection_endpoint, "")
+}
+
+output "kb_postgres_endpoint" {
+  description = "PostgreSQL RDS endpoint for Knowledge Base"
+  value       = aws_db_instance.kb_postgres.endpoint
+}
+
+output "kb_postgres_arn" {
+  description = "ARN of the PostgreSQL RDS instance"
+  value       = aws_db_instance.kb_postgres.arn
+}
+
+output "kb_postgres_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing PostgreSQL credentials"
+  value       = aws_secretsmanager_secret.kb_postgres.arn
 }

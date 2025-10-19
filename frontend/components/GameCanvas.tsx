@@ -7,6 +7,7 @@ import { GameEngine } from '@/lib/gameEngine'
 import { EyeTracker } from '@/lib/eyeTracker'
 import { getActiveProfileSync } from '@/lib/profiles'
 import SessionSummary from './SessionSummary'
+import { ScorecardErrorBoundary } from './ScorecardErrorBoundary'
 
 interface GameCanvasProps {
   level: string
@@ -242,6 +243,21 @@ export default function GameCanvas({ level }: GameCanvasProps) {
     router.push('/')
   }
 
+  const handlePlayAgain = () => {
+    setShowSummary(false)
+    setSessionData(null)
+    setIsCalibrating(true)
+    setCalibrationStatus('ready')
+    setSessionStarted(false)
+    setCountdown(null)
+    setRemainingTime(300)
+    setTrackingAccuracy(0)
+  }
+
+  const handleTryDifferentLevel = () => {
+    router.push('/')
+  }
+
   return (
     <div className={styles.container}>
       <canvas ref={canvasRef} className={styles.canvas} />
@@ -311,7 +327,14 @@ export default function GameCanvas({ level }: GameCanvasProps) {
       )}
 
       {showSummary && sessionData && (
-        <SessionSummary sessionData={sessionData} onClose={handleCloseSummary} />
+        <ScorecardErrorBoundary>
+          <SessionSummary 
+            sessionData={sessionData} 
+            onClose={handleCloseSummary}
+            onPlayAgain={handlePlayAgain}
+            onTryDifferentLevel={handleTryDifferentLevel}
+          />
+        </ScorecardErrorBoundary>
       )}
     </div>
   )

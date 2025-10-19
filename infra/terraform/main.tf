@@ -32,6 +32,15 @@ provider "aws" {
   }
 }
 
+# VPC for RDS
+module "vpc" {
+  source = "./modules/vpc"
+
+  project_name = var.project_name
+  environment  = var.environment
+  vpc_cidr     = "10.0.0.0/16"
+}
+
 # S3 bucket for session data
 module "s3" {
   source = "./modules/s3"
@@ -89,11 +98,14 @@ module "api_gateway" {
 module "bedrock" {
   source = "./modules/bedrock"
 
-  project_name                    = var.project_name
-  environment                     = var.environment
-  model_id                        = var.bedrock_model_id
-  metrics_calculator_arn          = module.lambda.metrics_calculator_arn
+  project_name                     = var.project_name
+  environment                      = var.environment
+  model_id                         = var.bedrock_model_id
+  metrics_calculator_arn           = module.lambda.metrics_calculator_arn
   metrics_calculator_function_name = module.lambda.metrics_calculator_function_name
+  vpc_id                           = module.vpc.vpc_id
+  private_subnet_ids               = module.vpc.private_subnet_ids
+  vpc_cidr                         = module.vpc.vpc_cidr
 }
 
 # Frontend (S3 + CloudFront)

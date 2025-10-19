@@ -218,8 +218,7 @@ resource "aws_bedrockagent_data_source" "research_papers" {
     s3_configuration {
       bucket_arn = aws_s3_bucket.knowledge_base.arn
       inclusion_prefixes = [
-        "papers/",
-        "extracted/"
+        "papers/"
       ]
     }
   }
