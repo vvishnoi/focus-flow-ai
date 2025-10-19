@@ -44,6 +44,7 @@ export default function SessionSummary({
   const [analysis, setAnalysis] = useState<PerformanceAnalysis | null>(null)
   const [previousSession, setPreviousSession] = useState<SessionHistoryEntry | null>(null)
   const [isFirstSession, setIsFirstSession] = useState(false)
+  const [aiReportCountdown, setAiReportCountdown] = useState(30)
 
   // Calculate metrics
   const duration = Math.round((sessionData.endTime - sessionData.startTime) / 1000)
@@ -116,6 +117,17 @@ export default function SessionSummary({
     
     SessionHistoryManager.saveSession(sessionEntry)
   }, [])
+
+  // AI Report Countdown Timer
+  useEffect(() => {
+    if (aiReportCountdown <= 0) return
+    
+    const timer = setInterval(() => {
+      setAiReportCountdown(prev => prev > 0 ? prev - 1 : 0)
+    }, 1000)
+    
+    return () => clearInterval(timer)
+  }, [aiReportCountdown])
 
   const handlePlayAgain = () => {
     if (onPlayAgain) {
@@ -227,11 +239,25 @@ export default function SessionSummary({
 
         {/* AI Analysis Status */}
         <div className={styles.aiStatus}>
-          <div className={styles.aiIcon}>🤖</div>
-          <div className={styles.aiText}>
-            <strong>AI Analysis in Progress</strong>
-            <p>Your detailed performance report will be ready in ~30 seconds</p>
+          <div className={styles.aiIcon}>
+            {aiReportCountdown > 0 ? '🤖' : '✅'}
           </div>
+          <div className={styles.aiText}>
+            <strong>
+              {aiReportCountdown > 0 ? 'AI Analysis in Progress' : 'AI Analysis Complete!'}
+            </strong>
+            <p>
+              {aiReportCountdown > 0 
+                ? `Your detailed performance report will be ready in ${aiReportCountdown} seconds`
+                : 'Your AI-powered performance report is ready to view in the dashboard'
+              }
+            </p>
+          </div>
+          {aiReportCountdown > 0 && (
+            <div className={styles.aiSpinner}>
+              <div className={styles.spinner}></div>
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}

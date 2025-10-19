@@ -1,6 +1,7 @@
 // API client for FocusFlow AI backend
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+// Use the deployed API Gateway URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://oiks1jrjw2.execute-api.us-east-1.amazonaws.com/dev'
 
 export interface SessionData {
   userId: string

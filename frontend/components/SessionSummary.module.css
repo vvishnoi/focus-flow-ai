@@ -130,6 +130,26 @@
   margin: 0;
 }
 
+.aiSpinner {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(102, 126, 234, 0.2);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
