@@ -134,6 +134,10 @@ sequenceDiagram
 
 ## 🏗️ Technical Architecture
 
+### AWS High-Level Design
+
+![FocusFlow AI AWS Architecture](docs/images/focusflow-ai-aws-design.png)
+
 ### High-Level Architecture
 
 ```mermaid
