@@ -43,6 +43,26 @@ output "knowledge_base_bucket" {
   value       = module.bedrock.knowledge_base_bucket
 }
 
+output "bedrock_kb_bucket_name" {
+  description = "Bedrock Knowledge Base S3 bucket name (alias)"
+  value       = module.bedrock.knowledge_base_bucket
+}
+
+output "knowledge_base_id" {
+  description = "Bedrock Knowledge Base ID"
+  value       = module.bedrock.knowledge_base_id
+}
+
+output "knowledge_base_arn" {
+  description = "Bedrock Knowledge Base ARN"
+  value       = module.bedrock.knowledge_base_arn
+}
+
+output "data_source_id" {
+  description = "Knowledge Base Data Source ID"
+  value       = module.bedrock.data_source_id
+}
+
 output "frontend_bucket_name" {
   description = "Frontend S3 bucket name"
   value       = module.frontend.bucket_name
@@ -61,4 +81,10 @@ output "cloudfront_url" {
 output "frontend_url" {
   description = "Frontend application URL"
   value       = module.frontend.cloudfront_url
+}
+
+
+output "profiles_table_name" {
+  description = "DynamoDB profiles table name"
+  value       = module.dynamodb.profiles_table_name
 }

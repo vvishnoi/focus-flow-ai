@@ -1,0 +1,15 @@
+{
+  "name": "research-rag",
+  "version": "1.0.0",
+  "description": "Research RAG Lambda function for Bedrock Agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -38,6 +38,16 @@ variable "users_table_arn" {
   type        = string
 }
 
+variable "profiles_table_name" {
+  description = "DynamoDB profiles table name"
+  type        = string
+}
+
+variable "profiles_table_arn" {
+  description = "DynamoDB profiles table ARN"
+  type        = string
+}
+
 variable "bedrock_agent_id" {
   description = "Bedrock Agent ID"
   type        = string

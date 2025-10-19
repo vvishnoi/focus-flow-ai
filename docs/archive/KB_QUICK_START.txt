@@ -1,0 +1,165 @@
+=================================================================
+KNOWLEDGE BASE SETUP - QUICK START
+=================================================================
+
+COST: ~$2/month (vs $700/month for OpenSearch)
+TIME: 5 minutes
+DIFFICULTY: Easy
+
+=================================================================
+STEP 1: VERIFY IAM ROLE EXISTS
+=================================================================
+
+aws iam get-role --role-name focusflow-kb-role-dev
+
+Expected: Should return role ARN
+ARN: arn:aws:iam::394686422000:role/focusflow-kb-role-dev
+
+=================================================================
+STEP 2: VERIFY S3 BUCKET HAS FILES
+=================================================================
+
+aws s3 ls s3://focusflow-bedrock-kb-dev/papers/
+
+Expected: Should show healthline-eye-gazing.html (414 KB)
+
+=================================================================
+STEP 3: CREATE KNOWLEDGE BASE (AWS CONSOLE)
+=================================================================
+
+URL: https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/knowledge-bases
+
+Click: "Create knowledge base"
+
+Page 1 - Knowledge base details:
+  Name: focusflow-research-kb-dev
+  Description: Research papers on eye-gazing and attention training
+  IAM role: focusflow-kb-role-dev (select existing)
+  → Click Next
+
+Page 2 - Data source:
+  Name: research-papers
+  S3 URI: s3://focusflow-bedrock-kb-dev/papers/
+  → Click Next
+
+Page 3 - Embeddings model:
+  Select: Titan Embeddings G1 - Text
+  → Click Next
+
+Page 4 - Vector store:
+  Select: "Quick create a new vector store - Recommended" ⭐
+  (This is the key to low cost!)
+  → Click Next
+
+Page 5 - Review:
+  Review settings
+  → Click "Create knowledge base"
+
+Wait ~1 minute for creation
+
+=================================================================
+STEP 4: SYNC DATA SOURCE
+=================================================================
+
+In Knowledge Base page:
+  → Go to "Data source" tab
+  → Click "Sync" button
+  → Wait 2-3 minutes
+  → Status should show "Available" or "Synced"
+
+=================================================================
+STEP 5: TEST IT
+=================================================================
+
+In Knowledge Base page:
+  → Go to "Test knowledge base" tab
+  → Enter query: "What are the benefits of eye gazing?"
+  → Click "Run"
+  → Should see results from Healthline article with citations
+
+=================================================================
+STEP 6: GET KNOWLEDGE BASE ID
+=================================================================
+
+aws bedrock-agent list-knowledge-bases \
+  --query 'knowledgeBaseSummaries[?name==`focusflow-research-kb-dev`].knowledgeBaseId' \
+  --output text
+
+Save this ID - you'll need it for integration!
+
+=================================================================
+SUCCESS CHECKLIST
+=================================================================
+
+[ ] IAM role exists
+[ ] S3 bucket has files
+[ ] Knowledge Base created
+[ ] Data source synced
+[ ] Test query works
+[ ] Citations included
+[ ] Knowledge Base ID saved
+
+=================================================================
+COST BREAKDOWN
+=================================================================
+
+One-time:
+  Embeddings: $0.005 (for 10 documents)
+
+Monthly (1,000 queries):
+  Queries: $2.00
+  S3 storage: $0.0002
+  Total: ~$2/month
+
+Compare to:
+  OpenSearch: $700/month ❌
+  Kendra: $810/month ❌
+  Bedrock Managed: $2/month ✅
+
+SAVINGS: 99.7% 🎉
+
+=================================================================
+TROUBLESHOOTING
+=================================================================
+
+Issue: Can't find IAM role
+Fix: Make sure you're in us-east-1 region
+
+Issue: Sync fails
+Fix: Check S3 bucket permissions and file existence
+
+Issue: No results from test
+Fix: Wait for sync to complete, then re-sync if needed
+
+=================================================================
+NEXT STEPS
+=================================================================
+
+After setup:
+1. Test more queries
+2. Add more research papers
+3. Integrate with Bedrock Agent (Task 2)
+4. Query from application code
+
+=================================================================
+DOCUMENTATION
+=================================================================
+
+Detailed guides:
+- KB_SETUP_REFERENCE.md - Quick reference card
+- KB_VISUAL_GUIDE.md - Step-by-step with screenshots
+- BEDROCK_KB_SIMPLE_SETUP.md - Complete setup guide
+- AWS_KNOWLEDGE_BASE_COST_ANALYSIS.md - Cost comparison
+
+=================================================================
+READY TO START?
+=================================================================
+
+Open this URL in your browser:
+https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/knowledge-bases
+
+Follow the steps above!
+
+Good luck! 🚀
+
+=================================================================

@@ -23,3 +23,18 @@ variable "metrics_calculator_function_name" {
   description = "Metrics calculator Lambda function name"
   type        = string
 }
+
+variable "vpc_id" {
+  description = "VPC ID for RDS instance"
+  type        = string
+}
+
+variable "private_subnet_ids" {
+  description = "Private subnet IDs for RDS instance"
+  type        = list(string)
+}
+
+variable "vpc_cidr" {
+  description = "VPC CIDR block"
+  type        = string
+}

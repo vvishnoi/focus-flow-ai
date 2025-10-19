@@ -199,3 +199,113 @@ resource "aws_iam_role_policy" "lambda_bedrock" {
     }]
   })
 }
+
+# Create Profile Lambda
+data "archive_file" "create_profile" {
+  type        = "zip"
+  source_dir  = "${path.root}/../../backend/functions/create-profile"
+  output_path = "${path.root}/../../backend/functions/create-profile.zip"
+}
+
+resource "aws_lambda_function" "create_profile" {
+  filename         = data.archive_file.create_profile.output_path
+  function_name    = "${var.project_name}-create-profile-${var.environment}"
+  role            = aws_iam_role.lambda_role.arn
+  handler         = "index.handler"
+  source_code_hash = data.archive_file.create_profile.output_base64sha256
+  runtime         = "nodejs20.x"
+  timeout         = 10
+  memory_size     = 256
+
+  environment {
+    variables = {
+      PROFILES_TABLE_NAME = var.profiles_table_name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "create_profile" {
+  name              = "/aws/lambda/${aws_lambda_function.create_profile.function_name}"
+  retention_in_days = 7
+}
+
+# Get Profiles Lambda
+data "archive_file" "get_profiles" {
+  type        = "zip"
+  source_dir  = "${path.root}/../../backend/functions/get-profiles"
+  output_path = "${path.root}/../../backend/functions/get-profiles.zip"
+}
+
+resource "aws_lambda_function" "get_profiles" {
+  filename         = data.archive_file.get_profiles.output_path
+  function_name    = "${var.project_name}-get-profiles-${var.environment}"
+  role            = aws_iam_role.lambda_role.arn
+  handler         = "index.handler"
+  source_code_hash = data.archive_file.get_profiles.output_base64sha256
+  runtime         = "nodejs20.x"
+  timeout         = 10
+  memory_size     = 256
+
+  environment {
+    variables = {
+      PROFILES_TABLE_NAME = var.profiles_table_name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "get_profiles" {
+  name              = "/aws/lambda/${aws_lambda_function.get_profiles.function_name}"
+  retention_in_days = 7
+}
+
+# Delete Profile Lambda
+data "archive_file" "delete_profile" {
+  type        = "zip"
+  source_dir  = "${path.root}/../../backend/functions/delete-profile"
+  output_path = "${path.root}/../../backend/functions/delete-profile.zip"
+}
+
+resource "aws_lambda_function" "delete_profile" {
+  filename         = data.archive_file.delete_profile.output_path
+  function_name    = "${var.project_name}-delete-profile-${var.environment}"
+  role            = aws_iam_role.lambda_role.arn
+  handler         = "index.handler"
+  source_code_hash = data.archive_file.delete_profile.output_base64sha256
+  runtime         = "nodejs20.x"
+  timeout         = 10
+  memory_size     = 256
+
+  environment {
+    variables = {
+      PROFILES_TABLE_NAME = var.profiles_table_name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "delete_profile" {
+  name              = "/aws/lambda/${aws_lambda_function.delete_profile.function_name}"
+  retention_in_days = 7
+}
+
+# Update DynamoDB policy to include profiles table
+resource "aws_iam_role_policy" "lambda_profiles_dynamodb" {
+  name = "${var.project_name}-lambda-profiles-dynamodb-policy-${var.environment}"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:DeleteItem"
+      ]
+      Resource = [
+        var.profiles_table_arn,
+        "${var.profiles_table_arn}/index/*"
+      ]
+    }]
+  })
+}

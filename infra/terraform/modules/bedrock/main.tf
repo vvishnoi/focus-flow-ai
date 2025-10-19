@@ -25,6 +25,15 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "knowledge_base" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "knowledge_base" {
+  bucket = aws_s3_bucket.knowledge_base.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 # Upload knowledge base files
 resource "aws_s3_object" "benchmarks" {
   bucket       = aws_s3_bucket.knowledge_base.id
@@ -32,6 +41,33 @@ resource "aws_s3_object" "benchmarks" {
   source       = "${path.root}/../../backend/bedrock/knowledge-base/benchmarks.json"
   etag         = filemd5("${path.root}/../../backend/bedrock/knowledge-base/benchmarks.json")
   content_type = "application/json"
+}
+
+resource "aws_s3_object" "research_metadata" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "metadata/research-metadata.json"
+  source       = "${path.root}/../../backend/bedrock/knowledge-base/research-metadata.json"
+  etag         = filemd5("${path.root}/../../backend/bedrock/knowledge-base/research-metadata.json")
+  content_type = "application/json"
+}
+
+# Create folder structure for research documents
+resource "aws_s3_object" "papers_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "papers/"
+  content_type = "application/x-directory"
+}
+
+resource "aws_s3_object" "extracted_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "extracted/"
+  content_type = "application/x-directory"
+}
+
+resource "aws_s3_object" "metadata_folder" {
+  bucket       = aws_s3_bucket.knowledge_base.id
+  key          = "metadata/"
+  content_type = "application/x-directory"
 }
 
 # IAM role for Bedrock Agent
@@ -239,3 +275,96 @@ resource "aws_lambda_permission" "bedrock_invoke" {
 # Data sources
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
+
+
+# Action Group for Research Lookup
+resource "aws_bedrockagent_agent_action_group" "research_lookup" {
+  agent_id      = aws_bedrockagent_agent.focusflow.id
+  agent_version = "DRAFT"
+  
+  action_group_name = "ResearchLookup"
+  description       = "Search research papers for relevant scientific context"
+  
+  action_group_executor {
+    lambda = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:focusflow-research-rag-dev"
+  }
+
+  api_schema {
+    payload = jsonencode({
+      openapi = "3.0.0"
+      info = {
+        title   = "Research Lookup API"
+        version = "1.0.0"
+        description = "API for searching research papers and retrieving relevant scientific context"
+      }
+      paths = {
+        "/search-research" = {
+          post = {
+            summary = "Search research papers for relevant information"
+            description = "Searches through eye-tracking research papers to find relevant scientific context, studies, and findings related to the query"
+            operationId = "searchResearch"
+            requestBody = {
+              required = true
+              content = {
+                "application/json" = {
+                  schema = {
+                    type = "object"
+                    properties = {
+                      query = {
+                        type = "string"
+                        description = "The research question or topic to search for (e.g., 'fixation duration cognitive load', 'saccade velocity attention')"
+                      }
+                      topK = {
+                        type = "integer"
+                        description = "Number of results to return (default: 5, max: 10)"
+                        default = 5
+                        minimum = 1
+                        maximum = 10
+                      }
+                    }
+                    required = ["query"]
+                  }
+                }
+              }
+            }
+            responses = {
+              "200" = {
+                description = "Successful response with research context"
+                content = {
+                  "application/json" = {
+                    schema = {
+                      type = "object"
+                      properties = {
+                        context = {
+                          type = "string"
+                          description = "Formatted research context with citations and relevance scores"
+                        }
+                        resultsCount = {
+                          type = "integer"
+                          description = "Number of research findings returned"
+                        }
+                        query = {
+                          type = "string"
+                          description = "The original query"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
+# Lambda permission for Bedrock Agent to invoke research RAG
+resource "aws_lambda_permission" "bedrock_agent_research" {
+  statement_id  = "AllowBedrockAgentInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "focusflow-research-rag-dev"
+  principal     = "bedrock.amazonaws.com"
+  source_arn    = aws_bedrockagent_agent.focusflow.agent_arn
+}

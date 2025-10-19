@@ -22,7 +22,121 @@
 .subtitle {
   font-size: 1.25rem;
   color: #aaa;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+}
+
+.profileBanner {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.profileBanner > div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profileLabel {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.profileName {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.profileAge {
+  color: #666;
+  font-size: 0.95rem;
+  padding: 0.25rem 0.75rem;
+  background: #f0f0f0;
+  border-radius: 20px;
+}
+
+.profileActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.changeProfileButton {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #667eea;
+  background: white;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.changeProfileButton:hover {
+  background: #667eea;
+  color: white;
+}
+
+.clearProfileButton {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #dc3545;
+  background: white;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.clearProfileButton:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.noProfileBanner {
+  background: rgba(255, 193, 7, 0.15);
+  border: 2px solid rgba(255, 193, 7, 0.5);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.noProfileBanner p {
+  margin: 0;
+  color: #ffc107;
+  font-size: 1rem;
+}
+
+.selectProfileButton {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  background: #ffc107;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.selectProfileButton:hover {
+  background: #ffb300;
+  transform: translateY(-2px);
 }
 
 .placeholder {

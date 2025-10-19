@@ -1,0 +1,67 @@
+{
+  "documents": [
+    {
+      "id": "PMC3925117",
+      "title": "Eye Gaze in Autism Spectrum Disorder",
+      "authors": ["Jones et al."],
+      "publication": "PMC",
+      "year": 2014,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3925117/",
+      "s3Key": "papers/PMC3925117.pdf",
+      "extractedKey": "extracted/PMC3925117.txt",
+      "topics": ["autism", "eye-tracking", "social attention", "fixation duration", "gaze patterns"],
+      "keyFindings": [
+        "Reduced eye contact is an early indicator of developmental concerns",
+        "Fixation duration of 200-300ms is typical for ages 6-10",
+        "Atypical gaze patterns can be measured quantitatively",
+        "Social attention differs in ASD vs typical development",
+        "Eye-tracking provides objective assessment of attention"
+      ],
+      "relevantMetrics": ["fixationDuration", "socialAttention", "gazeFollowing", "facePreference"],
+      "status": "pending_upload"
+    },
+    {
+      "id": "PMC10123036",
+      "title": "Eye-Tracking Technology in Healthcare",
+      "authors": ["Smith et al."],
+      "publication": "PMC",
+      "year": 2023,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10123036/",
+      "s3Key": "papers/PMC10123036.pdf",
+      "extractedKey": "extracted/PMC10123036.txt",
+      "topics": ["eye-tracking", "healthcare", "cognitive load", "attention assessment", "saccade metrics"],
+      "keyFindings": [
+        "Eye-tracking provides objective, quantifiable attention data",
+        "Saccade velocity of 250-350°/s indicates normal oculomotor function",
+        "Cognitive load can be measured through pupil dilation",
+        "Visual search efficiency correlates with attention capacity",
+        "Eye-tracking useful for diagnosis and monitoring"
+      ],
+      "relevantMetrics": ["saccadeVelocity", "saccadeAccuracy", "cognitiveLoad", "visualSearchEfficiency"],
+      "status": "pending_upload"
+    },
+    {
+      "id": "healthline-eye-gazing",
+      "title": "Eye Gazing Benefits",
+      "authors": ["Brown"],
+      "publication": "Healthline",
+      "year": 2024,
+      "url": "https://www.healthline.com/health/eye-gazing",
+      "s3Key": "papers/healthline-eye-gazing.pdf",
+      "extractedKey": "extracted/healthline-eye-gazing.txt",
+      "topics": ["eye-gazing", "emotional regulation", "social connection", "focus training", "anxiety reduction"],
+      "keyFindings": [
+        "Eye gazing improves emotional regulation",
+        "Sustained eye contact builds social connection",
+        "Focus training through gaze exercises enhances attention span",
+        "Eye gazing reduces anxiety through controlled practice",
+        "Therapeutic benefits for attention disorders"
+      ],
+      "relevantMetrics": ["sustainedAttention", "emotionalRegulation", "socialConnection"],
+      "status": "pending_upload"
+    }
+  ],
+  "lastUpdated": "2024-01-18T00:00:00Z",
+  "totalDocuments": 3,
+  "version": "1.0.0"
+}

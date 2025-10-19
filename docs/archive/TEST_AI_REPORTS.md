@@ -1,0 +1,242 @@
+# How to Test AI Reports - Step by Step
+
+## Quick Test (Recommended)
+
+### Step 1: Open the App
+```
+https://d3sy81kn37rion.cloudfront.net/
+```
+
+### Step 2: Play a Game
+1. Click "Start Game" or choose a level
+2. Play for at least 10-15 seconds
+3. Complete the session
+4. You'll see the scorecard
+
+### Step 3: Wait for AI Analysis
+- The scorecard shows "AI Analysis Complete!" after 3 seconds (this is just UI)
+- **Actual AI report takes 30-60 seconds to generate**
+- Wait 1 minute after completing the game
+
+### Step 4: View Your Report
+1. Go to Dashboard (from home page)
+2. Your AI-generated report will appear!
+
+## What If No Reports Show?
+
+### Check Your User ID
+Open browser console (F12) and run:
+```javascript
+localStorage.getItem('focusflow_user_id')
+```
+
+This shows your current userId. Reports are stored under this ID.
+
+### View Reports for Existing Users
+
+We know these users have reports already:
+- `user_1760587506861_11qrr5vle`
+- `user_1760670775879_j20yqdam0`
+
+To view their reports:
+
+1. Open browser console (F12)
+2. Run:
+```javascript
+localStorage.setItem('focusflow_user_id', 'user_1760587506861_11qrr5vle')
+location.reload()
+```
+3. Go to Dashboard
+4. You'll see their report!
+
+## Test via API (For Developers)
+
+### Test 1: Submit a Session
+```bash
+curl -X POST "https://oiks1jrjw2.execute-api.us-east-1.amazonaws.com/dev/submit-session" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "test-user-123",
+    "sessionId": "session-123",
+    "profileId": "profile-1",
+    "profileName": "Test User",
+    "profileAge": 10,
+    "profileGender": "male",
+    "level": "follow-the-leader",
+    "startTime": 1700000000000,
+    "endTime": 1700000046000,
+    "sessionDuration": 46,
+    "datePlayed": "2024-01-15",
+    "gazeData": [{
+      "timestamp": 1700000000000,
+      "gazeX": 100,
+      "gazeY": 100,
+      "objectId": "obj1",
+      "objectX": 105,
+      "objectY": 105
+    }],
+    "events": [],
+    "metrics": {
+      "totalGazePoints": 1,
+      "accurateGazes": 1,
+      "accuracyPercentage": 100
+    }
+  }'
+```
+
+Expected response:
+```json
+{
+  "message": "Session data received successfully",
+  "s3Key": "sessions/test-user-123/session-123_...",
+  "sessionId": "session-123"
+}
+```
+
+### Test 2: Wait for AI Processing
+```bash
+# Wait 60 seconds
+sleep 60
+```
+
+### Test 3: Check for Report
+```bash
+curl "https://oiks1jrjw2.execute-api.us-east-1.amazonaws.com/dev/reports/test-user-123" | jq '.'
+```
+
+Expected response:
+```json
+{
+  "userId": "test-user-123",
+  "reports": [{
+    "sessionId": "session-123",
+    "report": "# FocusFlow AI Therapeutic Session Report\n\n...",
+    "modelUsed": "claude-sonnet-4.5",
+    "timestamp": 1760874242706
+  }],
+  "count": 1
+}
+```
+
+## Monitor AI Generation
+
+### Watch Lambda Logs
+```bash
+aws logs tail /aws/lambda/focusflow-analysis-trigger-dev --follow
+```
+
+You should see:
+```
+INFO Processing session: sessions/test-user-123/...
+INFO Calling metrics calculator...
+INFO Metrics calculated: {...}
+INFO Invoking Claude...
+INFO Report stored in DynamoDB ✅
+```
+
+### Check DynamoDB
+```bash
+aws dynamodb scan --table-name focusflow-reports-dev --limit 5 | jq '.Items[] | {userId: .userId.S, sessionId: .sessionId.S}'
+```
+
+## Troubleshooting
+
+### "No reports yet!" in Dashboard
+
+**Possible Reasons:**
+1. **Haven't played a game yet** → Play a game first!
+2. **Just played, report still generating** → Wait 60 seconds
+3. **Different device/browser** → Each device has unique userId
+4. **Cleared browser data** → Lost your userId, need to play again
+
+**Solution:**
+Play a game, wait 1 minute, refresh dashboard.
+
+### Reports Not Generating
+
+**Check Lambda Logs:**
+```bash
+aws logs tail /aws/lambda/focusflow-analysis-trigger-dev --since 5m
+```
+
+**Look for:**
+- ✅ "Report stored in DynamoDB" = Success!
+- ❌ "AccessDeniedException" = Permission issue (should be fixed)
+- ❌ "Error processing analysis" = Check error details
+
+### API Returns Empty Reports
+
+**Verify userId:**
+```bash
+# Check what reports exist
+aws dynamodb scan --table-name focusflow-reports-dev \
+  --projection-expression "userId" | jq -r '.Items[].userId.S' | sort -u
+
+# Use one of those userIds in your API call
+curl "https://oiks1jrjw2.execute-api.us-east-1.amazonaws.com/dev/reports/USER_ID_HERE"
+```
+
+## Expected Timeline
+
+| Step | Time | Status |
+|------|------|--------|
+| Submit session | Instant | ✅ |
+| Store in S3 | 1-2 sec | ✅ |
+| Trigger Lambda | 1-2 sec | ✅ |
+| Calculate metrics | 1 sec | ✅ |
+| Call Bedrock | 20-30 sec | ✅ |
+| Generate report | 5-10 sec | ✅ |
+| Store in DynamoDB | 1 sec | ✅ |
+| **Total** | **30-60 sec** | ✅ |
+
+## Success Indicators
+
+### In Browser Console:
+```
+Fetching reports for user: user_1760841054950_fmr51r4t8
+Found 1 report
+```
+
+### In Dashboard:
+- Report card appears
+- Shows session date/time
+- Contains full AI analysis
+- Shows "Generated by claude-sonnet-4.5"
+
+### In CloudWatch Logs:
+```
+INFO Report stored in DynamoDB
+END RequestId: ...
+```
+
+## Sample Report Preview
+
+When working, you'll see a comprehensive report like:
+
+```
+# FocusFlow AI Therapeutic Session Report
+
+## Session Summary
+**Activity Level:** Follow-the-Leader
+**Session Duration:** 46 seconds
+**Tracking Quality:** Excellent
+
+## Performance Highlights
+What a wonderful session! Your child demonstrated remarkable 
+engagement and focus throughout this Follow-the-Leader activity...
+
+## Key Metrics & Interpretation
+**Tracking Accuracy: 100%** ✨
+Outstanding! The eye-tracking system maintained perfect connection...
+
+[... continues with detailed analysis ...]
+```
+
+## Conclusion
+
+The AI report system is **fully functional**! Just:
+1. Play a game
+2. Wait 1 minute  
+3. Check dashboard
+
+Reports will appear! 🎉
