@@ -11,8 +11,8 @@
 
 - [Overview](#overview)
 - [How It Helps](#how-it-helps)
-- [Application Flow](#application-flow)
 - [Technical Architecture](#technical-architecture)
+- [Application Flow](#application-flow)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [AWS Components](#aws-components)
@@ -67,68 +67,6 @@
 - **Research Integration**: AI analysis backed by peer-reviewed studies
 - **Time Efficiency**: Automated report generation saves hours
 - **Treatment Planning**: Identify strengths and areas needing support
-
----
-
-## 🔄 Application Flow
-
-### User Journey
-
-```mermaid
-graph TD
-    A[User Opens App] --> B{Has Profile?}
-    B -->|No| C[Create/Select Profile]
-    B -->|Yes| D[Home Page]
-    C --> D
-    D --> E[Select Game Level]
-    E --> F[Calibrate Eye Tracker]
-    F --> G[Play Game]
-    G --> H[Collect Gaze Data]
-    H --> I[Session Complete]
-    I --> J[View Scorecard]
-    J --> K[Submit to Backend]
-    K --> L[AI Analysis]
-    L --> M[View Report in Dashboard]
-    M --> N{Play Again?}
-    N -->|Yes| E
-    N -->|No| O[End]
-```
-
-### Data Flow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant API Gateway
-    participant Lambda
-    participant S3
-    participant Bedrock
-    participant DynamoDB
-
-    User->>Frontend: Play Game
-    Frontend->>Frontend: Track Eye Gaze
-    Frontend->>Frontend: Calculate Metrics
-    Frontend->>User: Show Scorecard
-    Frontend->>API Gateway: POST /submit-session
-    API Gateway->>Lambda: data-ingestor
-    Lambda->>S3: Store Session Data
-    Lambda->>DynamoDB: Update User Record
-    Lambda-->>Frontend: Success Response
-    S3->>Lambda: Trigger analysis-trigger
-    Lambda->>Lambda: Calculate Metrics
-    Lambda->>Bedrock: Invoke Claude 3.5
-    Bedrock->>Bedrock: Generate Report
-    Bedrock-->>Lambda: AI Report
-    Lambda->>DynamoDB: Store Report
-    User->>Frontend: Open Dashboard
-    Frontend->>API Gateway: GET /reports/{userId}
-    API Gateway->>Lambda: get-reports
-    Lambda->>DynamoDB: Query Reports
-    DynamoDB-->>Lambda: Report Data
-    Lambda-->>Frontend: Reports
-    Frontend->>User: Display AI Report
-```
 
 ---
 
@@ -253,6 +191,68 @@ graph LR
     L4 --> DDB3
     L5 --> DDB3
     L6 --> DDB3
+```
+
+---
+
+## 🔄 Application Flow
+
+### User Journey
+
+```mermaid
+graph TD
+    A[User Opens App] --> B{Has Profile?}
+    B -->|No| C[Create/Select Profile]
+    B -->|Yes| D[Home Page]
+    C --> D
+    D --> E[Select Game Level]
+    E --> F[Calibrate Eye Tracker]
+    F --> G[Play Game]
+    G --> H[Collect Gaze Data]
+    H --> I[Session Complete]
+    I --> J[View Scorecard]
+    J --> K[Submit to Backend]
+    K --> L[AI Analysis]
+    L --> M[View Report in Dashboard]
+    M --> N{Play Again?}
+    N -->|Yes| E
+    N -->|No| O[End]
+```
+
+### Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API Gateway
+    participant Lambda
+    participant S3
+    participant Bedrock
+    participant DynamoDB
+
+    User->>Frontend: Play Game
+    Frontend->>Frontend: Track Eye Gaze
+    Frontend->>Frontend: Calculate Metrics
+    Frontend->>User: Show Scorecard
+    Frontend->>API Gateway: POST /submit-session
+    API Gateway->>Lambda: data-ingestor
+    Lambda->>S3: Store Session Data
+    Lambda->>DynamoDB: Update User Record
+    Lambda-->>Frontend: Success Response
+    S3->>Lambda: Trigger analysis-trigger
+    Lambda->>Lambda: Calculate Metrics
+    Lambda->>Bedrock: Invoke Claude 3.5
+    Bedrock->>Bedrock: Generate Report
+    Bedrock-->>Lambda: AI Report
+    Lambda->>DynamoDB: Store Report
+    User->>Frontend: Open Dashboard
+    Frontend->>API Gateway: GET /reports/{userId}
+    API Gateway->>Lambda: get-reports
+    Lambda->>DynamoDB: Query Reports
+    DynamoDB-->>Lambda: Report Data
+    Lambda-->>Frontend: Reports
+    Frontend->>User: Display AI Report
 ```
 
 ---
